@@ -1,0 +1,35 @@
+name: Pre-commit Checks
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+    
+      - name: Set Node.js Environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.17
+
+      - run: |
+          npm install -g @angular/cli  > /dev/null
+          npm install karma
+          npm install
+
+      - name: Lint Test
+        run: ng lint
+
+      - name: Unit Test
+        run: ng test --browsers=ChromeHeadless --watch=false --code-coverage
+
+      - name: Build
+        run: ng build --prod
